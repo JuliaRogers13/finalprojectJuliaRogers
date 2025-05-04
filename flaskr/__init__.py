@@ -38,6 +38,9 @@ def create_app(test_config=None):
     app.register_blueprint(blog.bp)
     app.add_url_rule('/', endpoint='index')
 
+    from . import lists
+    app.register_blueprint(lists.bp)
+
     @app.route('/dashboard')
     def dashboard():
         from flaskr.db import get_db

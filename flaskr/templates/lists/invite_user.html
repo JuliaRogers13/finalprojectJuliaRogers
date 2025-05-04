@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+
+{% block header %}
+  <h1>Invite a User to This List</h1>
+{% endblock %}
+
+{% block content %}
+  <form method="post">
+    <label for="username">Username</label>
+    <input name="username" id="username" required>
+
+    <label>Access</label>
+    <select name="permission">
+      <option value="view">View Only</option>
+      <option value="edit">Can Edit</option>
+    </select>
+
+    <input type="submit" value="Invite">
+  </form>
+  <br>
+  <a href="{{ url_for('lists.view_list', list_id=list_id) }}">← Back to List</a>
+{% endblock %}
