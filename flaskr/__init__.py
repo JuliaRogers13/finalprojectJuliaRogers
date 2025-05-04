@@ -1,6 +1,6 @@
 import os
 
-from flask import Flask
+from flask import Flask, g, redirect, url_for, render_template
 
 def create_app(test_config=None):
     # create and configure the app
@@ -36,7 +36,7 @@ def create_app(test_config=None):
 
     from . import blog
     app.register_blueprint(blog.bp)
-    app.add_url_rule('/', endpoint='index')
+    #app.add_url_rule('/', endpoint='index')
 
     from . import lists
     app.register_blueprint(lists.bp)
@@ -69,5 +69,12 @@ def create_app(test_config=None):
         ).fetchall()
 
         return render_template('dashboard.html', lists=lists, activity=activity)
+
+    @app.route('/')
+    def home():
+        from flask import g
+        if g.user:
+            return redirect(url_for('dashboard'))
+        return redirect(url_for('auth.login'))
 
     return app
