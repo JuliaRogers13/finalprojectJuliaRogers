@@ -35,10 +35,12 @@ def register():
                     (username, generate_password_hash(password), firstname, lastname)
                 )
                 db.commit()
+                user = db.execute('SELECT * FROM user WHERE username = ?', (username,)).fetchone()
+                session.clear()
+                session['user_id'] = user['id']
+                return redirect(url_for("dashboard"))
             except db.IntegrityError:
                 error = f"User {username} is already registered."
-            else:
-                return redirect(url_for("auth.login"))
 
         flash(error)
 
@@ -65,7 +67,7 @@ def login():
         if error is None:
             session.clear()
             session['user_id'] = user['id']
-            return redirect(url_for('index'))
+            return redirect(url_for('dashboard'))
 
         flash(error)
 

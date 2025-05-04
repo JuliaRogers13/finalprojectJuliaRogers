@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+
+{% block header %}
+  <h1>Dashboard</h1>
+{% endblock %}
+
+{% block content %}
+
+<h2>Recent Activity</h2>
+<ul>
+  {% for item in activity %}
+    <li>
+      <strong>{{ item['firstname'] }}</strong> 
+      {% if item['watched'] %}watched{% else %}added{% endif %} 
+      <em>{{ item['title'] }}</em> 
+      to <strong>{{ item['list_name'] }}</strong> on {{ item['created'] }}
+    </li>
+  {% else %}
+    <li>No recent activity yet.</li>
+  {% endfor %}
+</ul>
+
+<hr>
+
+<h2>Your Movie Lists</h2>
+<ul>
+  {% for lst in lists %}
+    <li>
+      <a href="{{ url_for('view_list', list_id=lst['id']) }}">{{ lst['name'] }}</a>
+      {% if lst['can_edit'] %}
+        (Edit Access)
+      {% else %}
+        (View Only)
+      {% endif %}
+    </li>
+  {% else %}
+    <li>You are not part of any lists yet.</li>
+  {% endfor %}
+</ul>
+
+<a href="{{ url_for('create_list') }}">+ Create New List</a>
+
+{% endblock %}

@@ -38,4 +38,30 @@ def create_app(test_config=None):
     app.register_blueprint(blog.bp)
     app.add_url_rule('/', endpoint='index')
 
+    @app.route('/dashboard')
+    def dashboard():
+        from flaskr.db import get_db
+        db = get_db()
+        user_id = g.user['id'] if g.user else None
+
+        # Get lists the user belongs to
+        lists = db.execute(
+            'SELECT l.id, l.name, lu.can_edit '
+            'FROM list l JOIN list_user lu ON l.id = lu.list_id '
+            'WHERE lu.user_id = ?',
+            (user_id,)
+        ).fetchall()
+
+        # Get recent movie activity
+        activity = db.execute(
+            'SELECT m.title, m.watched, m.created, u.firstname, l.name AS list_name '
+            'FROM movie m '
+            'JOIN user u ON m.added_by = u.id '
+            'JOIN list l ON m.list_id = l.id '
+            'ORDER BY m.created DESC '
+            'LIMIT 5'
+        ).fetchall()
+
+        return render_template('dashboard.html', lists=lists, activity=activity)
+
     return app
