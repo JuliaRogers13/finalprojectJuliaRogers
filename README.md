@@ -6,7 +6,7 @@
 
 ## Description
 
-This project will be using Flask to deploy a small blog app.
+This project will be using Flask to deploy a movie app.
 
 ## Getting Started
  
