@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+
+{% block header %}
+  <h1>Select a Genre</h1>
+{% endblock %}
+
+{% block content %}
+  <input type="text" id="search" placeholder="Search genres..." onkeyup="filterGenres()">
+  <ul id="genre-list">
+    {% for genre in genres %}
+      <li>
+        <a href="{{ url_for('genres.genre_detail', list_id=list_id, genre_id=genre['id']) }}">
+          {{ genre['name'] }}
+        </a>
+      </li>
+    {% endfor %}
+  </ul>
+
+  <script>
+    function filterGenres() {
+      const search = document.getElementById("search").value.toLowerCase();
+      const genres = document.getElementById("genre-list").getElementsByTagName("li");
+      for (let i = 0; i < genres.length; i++) {
+        const text = genres[i].innerText.toLowerCase();
+        genres[i].style.display = text.includes(search) ? "" : "none";
+      }
+    }
+  </script>
+{% endblock %}

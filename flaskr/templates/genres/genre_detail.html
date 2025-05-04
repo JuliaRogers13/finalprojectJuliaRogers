@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+
+{% block header %}
+  <h1>{{ genre['name'] }}</h1>
+{% endblock %}
+
+{% block content %}
+  <h2>Add a Movie</h2>
+  <form method="post">
+    <label for="title">Title</label>
+    <input name="title" id="title" required>
+    <label for="description">Description (optional)</label>
+    <textarea name="description" id="description"></textarea>
+    <input type="submit" value="Add Movie">
+  </form>
+
+  <hr>
+
+  <div style="display: flex; gap: 2rem;">
+    <div style="flex: 1;">
+      <h2>Unwatched</h2>
+      <ul>
+        {% for movie in unwatched %}
+          <li>
+            {{ movie['title'] }}{% if movie['description'] %}: {{ movie['description'] }}{% endif %}
+            <a href="{{ url_for('genres.toggle_movie', movie_id=movie['id'], list_id=list_id, genre_id=genre_id) }}">Mark Watched</a>
+          </li>
+        {% else %}
+          <li>No unwatched movies.</li>
+        {% endfor %}
+      </ul>
+    </div>
+
+    <div style="flex: 1;">
+      <h2>Watched</h2>
+      <ul>
+        {% for movie in watched %}
+          <li>
+            {{ movie['title'] }}{% if movie['description'] %}: {{ movie['description'] }}{% endif %}
+            <a href="{{ url_for('genres.toggle_movie', movie_id=movie['id'], list_id=list_id, genre_id=genre_id) }}">Mark Unwatched</a>
+          </li>
+        {% else %}
+          <li>No watched movies yet.</li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+{% endblock %}

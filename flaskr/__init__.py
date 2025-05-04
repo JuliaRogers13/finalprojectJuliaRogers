@@ -41,6 +41,9 @@ def create_app(test_config=None):
     from . import lists
     app.register_blueprint(lists.bp)
 
+    from . import genres
+    app.register_blueprint(genres.bp)
+
     @app.route('/dashboard')
     def dashboard():
         from flaskr.db import get_db
