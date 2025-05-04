@@ -1,5 +1,6 @@
 import os
-
+import logging
+import traceback
 from flask import Flask, g, redirect, url_for, render_template
 
 def create_app(test_config=None):
@@ -23,20 +24,21 @@ def create_app(test_config=None):
     except OSError:
         pass
 
-    # a simple page that says hello
+    # simple test route
     @app.route('/hello')
     def hello():
         return 'Hello, World!'
 
+    # initialize the database
     from . import db
     db.init_app(app)
 
+    # register all blueprints (this must happen before any routes use g.user)
     from . import auth
     app.register_blueprint(auth.bp)
 
     from . import blog
     app.register_blueprint(blog.bp)
-    #app.add_url_rule('/', endpoint='index')
 
     from . import lists
     app.register_blueprint(lists.bp)
@@ -44,6 +46,7 @@ def create_app(test_config=None):
     from . import genres
     app.register_blueprint(genres.bp)
 
+    # route: user dashboard
     @app.route('/dashboard')
     def dashboard():
         from flaskr.db import get_db
@@ -70,9 +73,9 @@ def create_app(test_config=None):
 
         return render_template('dashboard.html', lists=lists, activity=activity)
 
+    # route: homepage redirects based on login
     @app.route('/')
     def home():
-        from flask import g
         if g.user:
             return redirect(url_for('dashboard'))
         return redirect(url_for('auth.login'))
