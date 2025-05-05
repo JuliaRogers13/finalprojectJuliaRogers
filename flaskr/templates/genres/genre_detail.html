@@ -21,9 +21,14 @@
       <h2>Unwatched</h2>
       <ul>
         {% for movie in unwatched %}
-          <li>
-            {{ movie['title'] }}{% if movie['description'] %}: {{ movie['description'] }}{% endif %}
-            <a href="{{ url_for('genres.toggle_movie', movie_id=movie['id'], list_id=list_id, genre_id=genre_id) }}">Mark Watched</a>
+          <li class="movie-entry">
+            <div class="movie-info">
+              <strong>{{ movie['title'] }}</strong>
+              {% if movie['description'] %} – {{ movie['description'] }}{% endif %}
+            </div>
+            <a href="{{ url_for('genres.toggle_movie', movie_id=movie['id'], list_id=list_id, genre_id=genre_id) }}">
+              Mark Watched
+            </a>
           </li>
         {% else %}
           <li>No unwatched movies.</li>
@@ -35,9 +40,14 @@
       <h2>Watched</h2>
       <ul>
         {% for movie in watched %}
-          <li>
-            {{ movie['title'] }}{% if movie['description'] %}: {{ movie['description'] }}{% endif %}
-            <a href="{{ url_for('genres.toggle_movie', movie_id=movie['id'], list_id=list_id, genre_id=genre_id) }}">Mark Unwatched</a>
+          <li class="movie-entry">
+            <div class="movie-info">
+              <strong>{{ movie['title'] }}</strong>
+              {% if movie['description'] %} – {{ movie['description'] }}{% endif %}
+            </div>
+            <a href="{{ url_for('genres.toggle_movie', movie_id=movie['id'], list_id=list_id, genre_id=genre_id) }}">
+              Mark Unwatched
+            </a>
           </li>
         {% else %}
           <li>No watched movies yet.</li>
@@ -45,4 +55,5 @@
       </ul>
     </div>
   </div>
+
 {% endblock %}

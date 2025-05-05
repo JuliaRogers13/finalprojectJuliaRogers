@@ -32,12 +32,11 @@ def create_list():
             )
 
             db.commit()
-            return redirect(url_for('view_list', list_id=list_id))
+            return redirect(url_for('lists.view_list', list_id=list_id))
 
         flash(error)
 
     return render_template('lists/create_list.html')
-
 
 @bp.route('/<int:list_id>')
 @login_required
@@ -59,8 +58,12 @@ def view_list(list_id):
         'SELECT * FROM list WHERE id = ?', (list_id,)
     ).fetchone()
 
-    return render_template('lists/view_list.html', list=list_info)
+    # Get all genres (alphabetically)
+    genres = db.execute(
+        'SELECT * FROM genre ORDER BY name ASC'
+    ).fetchall()
 
+    return render_template('lists/view_list.html', list=list_info, genres=genres)
 
 @bp.route('/<int:list_id>/invite', methods=('GET', 'POST'))
 @login_required
@@ -105,6 +108,6 @@ def invite_user(list_id):
                 )
                 db.commit()
                 flash(f"User {username} added with {'edit' if can_edit else 'view'} access.")
-                return redirect(url_for('view_list', list_id=list_id))
+                return redirect(url_for('lists.view_list', list_id=list_id))
 
     return render_template('lists/invite_user.html', list_id=list_id)

@@ -132,3 +132,26 @@ input[type=submit] {
   align-self: start;
   min-width: 10em;
 }
+
+.movie-entry {
+  margin-bottom: 1.5em;
+  padding-bottom: 1em;
+  border-bottom: 1px solid #ddd;
+}
+
+.movie-info {
+  margin-bottom: 0.5em;
+  font-size: 1.05em;
+}
+
+.movie-entry a {
+  display: inline-block;
+  padding: 0.25em 0.5em;
+  background: #eaeaea;
+  border-radius: 4px;
+  text-decoration: none;
+}
+
+.movie-entry a:hover {
+  background: #d6d6d6;
+}

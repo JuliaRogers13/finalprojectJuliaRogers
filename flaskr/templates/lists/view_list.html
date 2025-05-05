@@ -9,4 +9,43 @@
   <a href="{{ url_for('lists.invite_user', list_id=list['id']) }}">+ Invite Users</a>
   <br><br>
   <a href="{{ url_for('dashboard') }}">← Back to Dashboard</a>
+
+  <hr>
+
+  <h2>Genres</h2>
+  <input type="text" id="genre-search" placeholder="Search genres...">
+
+  <div id="genre-container">
+    {% for genre in genres %}
+      <div class="genre-box">
+        <a href="{{ url_for('genres.genre_detail', list_id=list.id, genre_id=genre.id) }}">
+          {{ genre.name }}
+        </a>
+      </div>
+    {% endfor %}
+  </div>
+
+  <script>
+    const searchInput = document.getElementById('genre-search');
+    const genres = document.querySelectorAll('#genre-container .genre-box');
+
+    searchInput.addEventListener('input', () => {
+      const term = searchInput.value.toLowerCase();
+      genres.forEach(box => {
+        const text = box.textContent.toLowerCase();
+        box.style.display = text.includes(term) ? '' : 'none';
+      });
+    });
+  </script>
+
+  <style>
+    .genre-box {
+      display: inline-block;
+      margin: 0.5em;
+      padding: 1em;
+      background: #f3f3f3;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+    }
+  </style>
 {% endblock %}
