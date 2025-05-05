@@ -4,7 +4,6 @@ from flaskr.auth import login_required
 
 bp = Blueprint('genres', __name__, url_prefix='/genres')
 
-
 @bp.route('/<int:list_id>')
 @login_required
 def select_genre(list_id):
@@ -16,13 +15,11 @@ def select_genre(list_id):
 
     return render_template('genres/select_genre.html', genres=genres, list_id=list_id)
 
-
 @bp.route('/<int:list_id>/<int:genre_id>', methods=('GET', 'POST'))
 @login_required
 def genre_detail(list_id, genre_id):
     db = get_db()
 
-    # Handle new movie creation
     if request.method == 'POST':
         title = request.form['title']
         description = request.form['description']
@@ -37,12 +34,10 @@ def genre_detail(list_id, genre_id):
             db.commit()
             return redirect(url_for('genres.genre_detail', list_id=list_id, genre_id=genre_id))
 
-    # Fetch genre name
     genre = db.execute(
         'SELECT name FROM genre WHERE id = ?', (genre_id,)
     ).fetchone()
 
-    # Get watched/unwatched movies
     unwatched = db.execute(
         'SELECT id, title, description FROM movie '
         'WHERE genre_id = ? AND list_id = ? AND watched = 0',
@@ -55,10 +50,14 @@ def genre_detail(list_id, genre_id):
         (genre_id, list_id)
     ).fetchall()
 
-    return render_template('genres/genre_detail.html',
-                           genre=genre, list_id=list_id,
-                           genre_id=genre_id, unwatched=unwatched, watched=watched)
-
+    return render_template(
+        'genres/genre_detail.html',
+        genre=genre,
+        list_id=list_id,
+        genre_id=genre_id,
+        unwatched=unwatched,
+        watched=watched
+    )
 
 @bp.route('/toggle/<int:movie_id>/<int:list_id>/<int:genre_id>')
 @login_required

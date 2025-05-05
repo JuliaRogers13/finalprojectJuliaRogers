@@ -4,6 +4,14 @@ from flaskr.auth import login_required
 
 bp = Blueprint('lists', __name__, url_prefix='/lists')
 
+def user_can_edit_list(list_id):
+    db = get_db()
+    result = db.execute(
+        'SELECT can_edit FROM list_user WHERE list_id = ? AND user_id = ?',
+        (list_id, g.user['id'])
+    ).fetchone()
+    return result and result['can_edit']
+
 @bp.route('/create', methods=('GET', 'POST'))
 @login_required
 def create_list():
