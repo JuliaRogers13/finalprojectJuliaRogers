@@ -38,6 +38,8 @@ CREATE TABLE movie (
   title TEXT NOT NULL,
   description TEXT,
   watched BOOLEAN NOT NULL DEFAULT 0,
+  recommended BOOLEAN,
+  rating REAL,
   genre_id INTEGER NOT NULL,
   list_id INTEGER NOT NULL,
   added_by INTEGER NOT NULL,
@@ -46,3 +48,4 @@ CREATE TABLE movie (
   FOREIGN KEY (list_id) REFERENCES list (id),
   FOREIGN KEY (added_by) REFERENCES user (id)
 );
+

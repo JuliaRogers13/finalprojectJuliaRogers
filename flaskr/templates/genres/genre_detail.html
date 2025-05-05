@@ -9,14 +9,17 @@
   <form method="post">
     <label for="title">Title</label>
     <input name="title" id="title" required>
+
     <label for="description">Description (optional)</label>
     <textarea name="description" id="description"></textarea>
+
     <input type="submit" value="Add Movie">
   </form>
 
   <hr>
 
   <div style="display: flex; gap: 2rem;">
+    <!-- Unwatched Section -->
     <div style="flex: 1;">
       <h2>Unwatched</h2>
       <ul>
@@ -26,9 +29,43 @@
               <strong>{{ movie['title'] }}</strong>
               {% if movie['description'] %} – {{ movie['description'] }}{% endif %}
             </div>
-            <a href="{{ url_for('genres.toggle_movie', movie_id=movie['id'], list_id=list_id, genre_id=genre_id) }}">
+            <button class="btn btn-sm btn-outline-primary mt-1" data-bs-toggle="modal" data-bs-target="#recommendModal{{ movie['id'] }}">
               Mark Watched
-            </a>
+            </button>
+
+            <!-- Modal -->
+            <div class="modal fade" id="recommendModal{{ movie['id'] }}" tabindex="-1" aria-labelledby="recommendModalLabel{{ movie['id'] }}" aria-hidden="true">
+              <div class="modal-dialog">
+                <form class="modal-content" method="post" action="{{ url_for('genres.mark_watched_form', movie_id=movie['id'], list_id=list_id, genre_id=genre_id) }}">
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="recommendModalLabel{{ movie['id'] }}">Recommendation & Rating</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                  </div>
+                  <div class="modal-body">
+                    <p>Would you recommend <strong>{{ movie['title'] }}</strong>?</p>
+                    <div class="d-flex gap-4 align-items-center">
+                      <div class="form-check">
+                        <input class="form-check-input" type="radio" name="recommended" id="yes{{ movie['id'] }}" value="yes" required>
+                        <label class="form-check-label" for="yes{{ movie['id'] }}">Yes</label>
+                      </div>
+                      <div class="form-check">
+                        <input class="form-check-input" type="radio" name="recommended" id="no{{ movie['id'] }}" value="no">
+                        <label class="form-check-label" for="no{{ movie['id'] }}">No</label>
+                      </div>
+                    </div>
+
+                    <div class="mt-3">
+                      <label for="rating{{ movie['id'] }}">Rating (1.0 - 10.0)</label>
+                      <input type="number" step="0.1" min="1" max="10" name="rating" id="rating{{ movie['id'] }}" class="form-control" required>
+                    </div>
+                  </div>
+                  <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                  </div>
+                </form>
+              </div>
+            </div>
           </li>
         {% else %}
           <li>No unwatched movies.</li>
@@ -36,6 +73,7 @@
       </ul>
     </div>
 
+    <!-- Watched Section -->
     <div style="flex: 1;">
       <h2>Watched</h2>
       <ul>
@@ -45,7 +83,13 @@
               <strong>{{ movie['title'] }}</strong>
               {% if movie['description'] %} – {{ movie['description'] }}{% endif %}
             </div>
-            <a href="{{ url_for('genres.toggle_movie', movie_id=movie['id'], list_id=list_id, genre_id=genre_id) }}">
+            {% if movie['recommended'] is not none %}
+              <div><em>Recommended:</em> {{ 'Yes' if movie['recommended'] else 'No' }}</div>
+            {% endif %}
+            {% if movie['rating'] is not none %}
+              <div><em>Rating:</em> {{ movie['rating'] }}/10</div>
+            {% endif %}
+            <a class="btn btn-sm btn-outline-secondary mt-1" href="{{ url_for('genres.toggle_movie', movie_id=movie['id'], list_id=list_id, genre_id=genre_id) }}">
               Mark Unwatched
             </a>
           </li>
@@ -55,5 +99,4 @@
       </ul>
     </div>
   </div>
-
 {% endblock %}
