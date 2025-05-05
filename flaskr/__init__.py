@@ -33,7 +33,7 @@ def create_app(test_config=None):
     from . import db
     db.init_app(app)
 
-    # register all blueprints (this must happen before any routes use g.user)
+    # register all blueprints
     from . import auth
     app.register_blueprint(auth.bp)
 
@@ -46,38 +46,46 @@ def create_app(test_config=None):
     from . import genres
     app.register_blueprint(genres.bp)
 
-    # route: user dashboard
     @app.route('/dashboard')
     def dashboard():
-        from flaskr.db import get_db
-        db = get_db()
-        user_id = g.user['id'] if g.user else None
+        try:
+            from flaskr.db import get_db
+            db = get_db()
+            if not g.user:
+                return redirect(url_for('auth.login'))
+            user_id = g.user['id']
 
-        # Get lists the user belongs to
-        lists = db.execute(
-            'SELECT l.id, l.name, lu.can_edit '
-            'FROM list l JOIN list_user lu ON l.id = lu.list_id '
-            'WHERE lu.user_id = ?',
-            (user_id,)
-        ).fetchall()
+            lists = db.execute(
+                'SELECT l.id, l.name, lu.can_edit '
+                'FROM list l JOIN list_user lu ON l.id = lu.list_id '
+                'WHERE lu.user_id = ?',
+                (user_id,)
+            ).fetchall()
 
-        # Get recent movie activity
-        activity = db.execute(
-            'SELECT m.title, m.watched, m.created, u.firstname, l.name AS list_name '
-            'FROM movie m '
-            'JOIN user u ON m.added_by = u.id '
-            'JOIN list l ON m.list_id = l.id '
-            'ORDER BY m.created DESC '
-            'LIMIT 5'
-        ).fetchall()
+            activity = db.execute(
+                'SELECT m.title, m.watched, m.created, u.firstname, l.name AS list_name '
+                'FROM movie m '
+                'JOIN user u ON m.added_by = u.id '
+                'JOIN list l ON m.list_id = l.id '
+                'ORDER BY m.created DESC '
+                'LIMIT 5'
+            ).fetchall()
 
-        return render_template('dashboard.html', lists=lists, activity=activity)
+            return render_template('dashboard.html', lists=lists, activity=activity)
 
-    # route: homepage redirects based on login
+        except Exception as e:
+            logging.error("DASHBOARD ERROR:\n" + traceback.format_exc())
+            return "Dashboard error occurred. Check terminal for details.", 500
+
     @app.route('/')
     def home():
-        if g.user:
-            return redirect(url_for('dashboard'))
-        return redirect(url_for('auth.login'))
+        try:
+            if g.user:
+                return redirect(url_for('dashboard'))
+            return redirect(url_for('auth.login'))
+        except Exception as e:
+            logging.error("HOME ERROR:\n" + traceback.format_exc())
+            return "Home error occurred. Check terminal for details.", 500
 
     return app
+

@@ -26,7 +26,7 @@
 <ul>
   {% for lst in lists %}
     <li>
-      <a href="{{ url_for('view_list', list_id=lst['id']) }}">{{ lst['name'] }}</a>
+      <a href="{{ url_for('lists.view_list', list_id=lst['id']) }}">{{ lst['name'] }}</a>
       {% if lst['can_edit'] %}
         (Edit Access)
       {% else %}
@@ -38,6 +38,6 @@
   {% endfor %}
 </ul>
 
-<a href="{{ url_for('create_list') }}">+ Create New List</a>
+<a href="{{ url_for('lists.create_list') }}">+ Create New List</a>
 
 {% endblock %}
